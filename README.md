@@ -1,9 +1,22 @@
-To run this project
+# Item Catalog - Udacity
+### Full Stack Web Development ND
+_______________________
+## About
 
-1. Navigate to fsnd_restaurant_menu inside the vagrant environment
+In this project we develop an application that provides a list of items within a variety of categories as well as provide a user registration and authentication system. Registered users will have the ability to post, edit and delete their own items.
 
-2. run database_setup.py to create the database
+## Prerequisites
+* Python 3:
+  + Download and install Python3 from this link-https://www.python.org/downloads/release/python-374/
 
-3. run lotsofmenus.py to populate the database
+## How to Run
+Run finalProject.py and navigate to localhost:5000 or localhost:5000/categories
+a default database (category_item.db) is provided to provide an initial catalog. 
+Users can perform CRUD operations to modify the database.
 
-4. run project.py and navigate to localhost:5000 in your browser
+## Authors
+* Ambuj Agrawal
+
+
+
+
