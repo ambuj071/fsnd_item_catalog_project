@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+{% block content %}
+    <div class="row main-section padding-top padding-bottom margin-right margin-left margin-top">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-9">
+                <form action="{{ url_for('editCategory',category_id = category.id)}}" method = 'post'>
+                        <strong>Name:</strong></br></br>
+                        <input type = 'text' size='30' name = 'name' placeholder = '{{category.name}}'>                    
+                        <input type='submit', value = 'Edit'>
+                    </form>
+                </br>
+                    <a href = '{{url_for('showItems', category_id = category.id)}}'> Cancel </a>
+        </div>
+    </div>
+{% endblock %}
+

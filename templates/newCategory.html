@@ -1,0 +1,16 @@
+{% extends "main.html" %}
+{% block content %}
+    <div class="row main-section padding-top padding-bottom margin-right margin-left margin-top">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-9">
+                <h3> New Category </h3>
+        <form action="{{url_for('newCategory')}}" method = 'POST'>
+            <p>Name:</p>
+            <input type='text' size='30' name='name'>
+            <input type='submit' value='Create'>
+        </form>
+        <a href = '{{url_for('showCategories')}}'> Cancel </a>
+        </div>
+    </div>
+{% endblock %}

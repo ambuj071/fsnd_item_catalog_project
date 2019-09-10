@@ -1,0 +1,22 @@
+{% extends "main.html" %}
+{% block content %}
+    <div class="row main-section padding-top padding-bottom margin-right margin-left margin-top">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-9">
+			<h3> Edit Menu Item </h3>
+			<form action="{{ url_for('editItem',category_id = category_id, item_id=item.id)}}" method = 'post'>	
+				<dl>
+					<dt>Name:</dt>
+						<dd><input type ='text' size='30' name='name' placeholder = '{{item.name }}'></dd>
+					</br>
+					<dt>Description:</dt>
+						<dd><textarea name = 'description' rows='5' cols='40' placeholder = '{{item.description }}'></textarea></dd>
+				</dl>
+				<input type='submit' value='Edit'>
+			</form>
+			</br>
+			<a href = '{{url_for('showItems', category_id = category_id)}}'> Cancel </a>				
+        </div>
+    </div>
+{% endblock %}

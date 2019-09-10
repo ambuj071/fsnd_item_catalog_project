@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Catalog App</title>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	<body>
+		<div class="row top-menu">
+			<div class="col-md-2">
+				<a href={{url_for("showCategories")}}>
+					<button class="btn_home btn-default">
+						<span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home
+					</button>
+				</a>
+			</div>
+			<div class="col-md-8"><h2>Catalog App</h2></div>
+			<div class="col-md-2 text-right">
+				{%if 'username' not in session %}
+					<a href={{url_for("showLogin")}}>
+						<button class="btn btn-default">
+							Login
+						</button>
+					</a>
+				{% else %}
+					<a href="{{url_for('disconnect')}}">
+						<button class="btn btn-default">
+							Logout
+						</button>
+					</a>
+				{% endif %}
+			</div>
+		</div>
+		<div class="row divider blue">
+			<div class="col-lg-12"></div>
+		</div>
+		{% block content %}
+		{% endblock %}
+	</body>
+</html>

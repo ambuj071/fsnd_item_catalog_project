@@ -1,0 +1,40 @@
+{% extends "main.html" %}
+{% block content %}
+
+    <div class = 'flash'>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}                
+                <ul>
+                {% for message in messages %}
+                    <li> <strong> {{ message }} </strong> </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="row main-section padding-top padding-bottom margin-right margin-left margin-top">
+        <div class="col-md-3">
+            <h3>Categories</h3><a href = {{url_for("newCategory")}}><p>Add new category</p></a>
+            {% if categories != []%}
+                <ul>
+                {% for i in categories %}                        
+                    <li><a href = {{url_for("showItems", category_id=i.id)}}>{{i.name}}</a></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>You currently have no categories</p>
+            {% endif %}
+        </div>
+        <div class="col-md-9">
+            <h3>Latest Items</h3>
+            {% if latest_items != []%}
+                <ul>
+                {% for i in range(length) %}                        
+                    <li>{{latest_items[i].name}}({{lic[i]}})</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

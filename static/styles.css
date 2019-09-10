@@ -1,0 +1,245 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Style the header */
+header {
+  background-color: #004;
+  padding: 5px;
+  text-align: center;
+  font-size: 25px;
+  color: white;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+p {
+ 	font-family: "Helvetica Neue", Roboto, Helvetica, Arial, sans-serif;
+ 	font-size: 16px;
+ 	color: #7B7573;
+ 	line-height: 24px;
+ 	font-weight: 400;
+ }
+
+/* Create two columns/boxes that floats next to each other */
+nav {
+  float: left;
+  width: 30%;
+  min-height: 500px; /* only for demonstration, should be removed */
+  background: #ccc;
+  padding: 20px;
+}
+
+/* Style the list inside the menu */
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+article {
+  float: left;
+  padding: 20px;
+  width: 70%;
+  background-color: #f1f1f1;
+  min-height: 500px; /* only for demonstration, should be removed */
+}
+
+/* Clear floats after the columns */
+section:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Style the footer */
+footer {
+  background-color: #777;
+  padding: 10px;
+  text-align: center;
+  color: white;
+}
+
+/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+@media (max-width: 600px) {
+  nav, article {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.alignleft {
+	float: left;
+}
+.alignright {
+	float: right;
+}
+
+a {
+ 	font-size: 14px;
+ 	color: #0093B9;
+ 	line-height: 23px;
+    
+ }
+
+ h2 a {
+	margin-bottom: 0;
+	line-height: 26px;
+	font-size: 26px;
+	color: #ffffff;
+	font-weight: 400;
+    text-decoration: none;
+}
+
+.btn {
+	padding: 10px;
+	margin: 0;
+	border-color: #FFA500;
+	border-width: 2px;
+	color: #FFFFFF;
+    background-color: #FFA500;
+}
+.btn:hover {
+	border-color: #FFA500;
+    background-color: #FFA500;
+}
+
+.btn_home {
+	padding: 10px;
+	margin: 0;
+	border-color: #9FB80A;
+	border-width: 2px;
+	color: #FFFFFF;
+    background-color: #9FB80A;
+}
+.btn_home:hover {
+	border-color: #9FB80A;
+    background-color: #9FB80A;
+}
+
+.top-menu {
+	padding-top: 30px;
+	padding-bottom: 10px;
+    background-color: #004;
+}
+
+.main-section {
+	padding-top: 30px;
+	padding-bottom: 10px;
+    background-color: grey;
+    height:700px;
+}
+
+h1,h2{
+    display: inline;
+}
+
+h1 {
+	font-family: "Helvetica Neue Light", Roboto, Helvetica, Arial, sans-serif;
+	font-size: 50px;
+	color: #51453B;
+	line-height: 60px;
+	font-weight: 300;
+}
+
+h2 {
+    font-family: sans-serif,"Helvetica Neue Light", Roboto, Helvetica, Arial;
+	font-size: 29px;
+	color: #FFFFFF;
+	line-height: 29px;
+}
+
+h3 {
+	font-size: 18px;
+	color: #4A4A4A;
+	line-height: 23px;
+}
+ p {
+ 	font-family: "Helvetica Neue", Roboto, Helvetica, Arial, sans-serif;
+ 	font-size: 14px;
+ 	color: #7B7573;
+ 	line-height: 24px;
+ 	font-weight: 400;
+ }
+
+ strong {
+ 	font-size: 16px;
+ 	color: #7B7573;
+ 	line-height: 24px;
+ }
+
+ a {
+ 	font-size: 14px;
+ 	color: #0093B9;
+ 	line-height: 23px;
+ }
+ 
+ li{
+	font-size: 16px;
+ }
+
+body{
+    background-color: gainsboro;
+}
+
+.divider {
+	height: 15px;
+    display: block;
+}
+.divider.blue {
+	background-color: #42C3C9;
+}
+.divider.green {
+	background-color: #9FB80A;
+}
+
+.row{
+    margin:auto;
+}
+
+.flash {
+	background-color: #98FB98;
+	width:100%;
+	text-decoration: none;
+
+}
+
+.flash li {
+	list-style-type: none;
+	text-align: center;
+
+}
+
+.padding-top {
+	padding-top: 0px;
+}
+.padding-bottom {
+	padding-bottom: 30px;
+}
+.margin-top {
+	margin-top: 30px;
+}
+.margin-right {
+	margin-right: 30px;
+}
+.margin-left {
+	margin-left: 30px;
+}
+.padding-none {
+	padding: 0;
+}
+
+.col-md-3 {
+	background-color: aliceblue;
+	height: 700px;
+	overflow: scroll;
+}
+
+.col-md-9 {
+	background-color: lightcyan;
+	height: 700px;
+	overflow: scroll;
+}
