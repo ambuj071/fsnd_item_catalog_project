@@ -10,9 +10,7 @@ In this project we develop an application that provides a list of items within a
   + Download and install Python3 from this link-https://www.python.org/downloads/release/python-374/
 
 ## How to Run
-Run finalProject.py and navigate to localhost:5000 or localhost:5000/categories
-a default database (category_item.db) is provided to provide an initial catalog. 
-Users can perform CRUD operations to modify the database.
+Run finalProject.py and navigate to localhost:5000 or localhost:5000/categories. A default database (category_item.db) is provided to provide an initial catalog. Users can perform CRUD operations to modify the database.
 
 ## Authors
 * Ambuj Agrawal
