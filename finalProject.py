@@ -1,5 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for,\
-    flash, jsonify
+from flask import (Flask, 
+                   render_template,
+                   request,
+                   redirect,
+                   url_for,
+                   flash,
+                   jsonify)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, User, Category, Item
@@ -15,6 +20,7 @@ import httplib2
 import json
 from flask import make_response
 import requests
+from functools import wraps
 
 app = Flask(__name__)
 
@@ -29,9 +35,25 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' in login_session:
+            return f(*args, **kwargs)
+        else:
+            return redirect('/login')
+    return decorated_function
+
+
 # Disconnect based on provider
 @app.route('/disconnect')
 def disconnect():
+    """
+        Logs out the user and disconnects from the provider
+        Login sesiion for the user is reset
+        Then returns the user to home page
+    """
+
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             gdisconnect()
@@ -54,6 +76,14 @@ def disconnect():
 
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
+    """
+        Called when User tries to login through Facebook
+        Once the login is successful-
+            1. State token is validated
+            2. user data is fetched from Facebook
+               and store in login_session object
+    """
+
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -132,6 +162,10 @@ def fbconnect():
 
 @app.route('/fbdisconnect')
 def fbdisconnect():
+    """
+        Revoke a current user's token
+    """
+
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
@@ -142,9 +176,12 @@ def fbdisconnect():
     return "you have been logged out"
 
 
-# Create anti-forgery state token
 @app.route('/login/')
 def showLogin():
+    """
+        Create anti-forgery state token
+        Then redirect the user to login page
+    """
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -153,6 +190,13 @@ def showLogin():
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    """
+        Called when User tries to login through Google
+        Once the login is successful-
+            1. State token is validated
+            2. user data is fetched from Google
+               and store in login_session object
+    """
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -243,36 +287,61 @@ def gconnect():
 
 
 def createUser(login_session):
+    """
+        Creates new user in the database
+        Args:
+            login_session: session object with user data
+        Returns:
+            user.id: generated distinct integer value identifying
+                     the new user created
+    """
+
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
     session.add(newUser)
     session.commit()
-    # users = session.query(User).filter_by(email=login_session['email']).all()
-    # for i in range(1, len(users)):
-    #    session.delete(users[i])
-    #    session.commit()
-
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
 
 def getUserInfo(user_id):
+    """
+        Returns user item based on user id
+        Args:
+            user_id: distinct integer value given to each user
+        Returns:
+            user: user associated with the user_id as stored
+            in the User database
+    """
+
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
+    """
+        Returns user item based on user's email
+        Args:
+            email: distinct email associated with each user
+        Returns:
+            if email is not associated with any user then None is returned
+            otherwise user associated with the email is returned
+            as stored in the User database
+    """
+
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
     except Exception as e:
         return None
 
-# DISCONNECT - Revoke a current user's token and reset their login_session
-
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    """
+        Revoke a current user's token and reset their login_session
+    """
+
     access_token = login_session.get('access_token')
     if access_token is None:
         print 'Access Token is None'
@@ -303,6 +372,13 @@ def gdisconnect():
 @app.route('/')
 @app.route('/categories/')
 def showCategories():
+    """
+        This is the home page
+        It lists all the Categories on the left
+        5 most recently added items are also listed
+        There is an option to Login as well
+    """
+
     categories = session.query(Category)
     latest_items = session.query(Item).order_by(Item.id.desc()).limit(5)
     latest_items_categories = [session.query(Category).
@@ -316,9 +392,16 @@ def showCategories():
 
 
 @app.route('/categories/new/', methods=['GET', 'POST'])
+@login_required
 def newCategory():
-    if 'username' not in login_session:
-        return redirect('/login')
+    """
+        Add a new Category to the database
+        Args:
+            On GET: Returns the page for adding a new category
+            On POST: Redirect to home after category is created
+            Login page when user is not signed in
+    """
+
     if request.method == 'POST':
         newItem = Category(name=request.form['name'],
                            user_id=login_session['user_id'])
@@ -331,9 +414,17 @@ def newCategory():
 
 
 @app.route('/categories/<int:category_id>/edit/', methods=['GET', 'POST'])
+@login_required
 def editCategory(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
+    """
+        Edit an existing Category in the database
+        Args:
+            On GET: Returns the page for editing the category
+            On POST: Redirect to home after category has been edited
+            Login page when user is not signed in
+            Error page when user is not authorized to edit
+    """
+
     editedItem = session.query(Category).filter_by(id=category_id).one()
     if editedItem.user_id != login_session['user_id']:
         return ("<script>function myFunction() {alert"
@@ -353,9 +444,17 @@ def editCategory(category_id):
 
 
 @app.route('/categories/<int:category_id>/delete/', methods=['GET', 'POST'])
+@login_required
 def deleteCategory(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
+    """
+        Delete an existing Category in the database
+        Args:
+            On GET: Returns the page for deleting the category
+            On POST: Redirect to home after category has been edited
+            Login page when user is not signed in
+            Error page when user is not authorized to delete
+    """
+
     deletedItem = session.query(Category).filter_by(id=category_id).one()
     if deletedItem.user_id != login_session['user_id']:
         return ("<script>function myFunction() {alert"
@@ -374,6 +473,10 @@ def deleteCategory(category_id):
 @app.route('/categories/<int:category_id>/')
 @app.route('/categories/<int:category_id>/items/')
 def showItems(category_id):
+    """
+        Displays the items present within a category
+    """
+
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(Item).filter_by(category_id=category.id)
     categories = session.query(Category)
@@ -382,9 +485,15 @@ def showItems(category_id):
 
 
 @app.route('/categories/<int:category_id>/items/new/', methods=['GET', 'POST'])
+@login_required
 def newItem(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
+    """
+        Add a new item to the database
+        Args:
+            On GET: Returns the page for adding a new item
+            On POST: Redirect to home after item is created
+            Login page when user is not signed in
+    """
     if request.method == 'POST':
         newItem = Item(name=request.form['name'],
                        description=request.form['description'],
@@ -400,9 +509,17 @@ def newItem(category_id):
 
 @app.route('/categories/<int:category_id>/items/<int:item_id>/edit/',
            methods=['GET', 'POST'])
+@login_required
 def editItem(category_id, item_id):
-    if 'username' not in login_session:
-        return redirect('/login')
+    """
+        Edit an existing Item in the database
+        Args:
+            On GET: Returns the page for editing the item
+            On POST: Redirect to home after item has been edited
+            Login page when user is not signed in
+            Error page when user is not authorized to edit
+    """
+
     editedItem = session.query(Item).filter_by(id=item_id).one()
     if editedItem.user_id != login_session['user_id']:
         return ("<script>function myFunction() {alert"
@@ -426,9 +543,17 @@ def editItem(category_id, item_id):
 
 @app.route('/categories/<int:category_id>/items/<int:item_id>/delete/',
            methods=['GET', 'POST'])
+@login_required
 def deleteItem(category_id, item_id):
-    if 'username' not in login_session:
-        return redirect('/login')
+    """
+        Delete an existing item in the database
+        Args:
+            On GET: Returns the page for deleting the item
+            On POST: Redirect to home after item has been edited
+            Login page when user is not signed in
+            Error page when user is not authorized to delete
+    """
+
     deletedItem = session.query(Item).filter_by(id=item_id).one()
     if deletedItem.user_id != login_session['user_id']:
         return ("<script>function myFunction() {alert"
@@ -447,23 +572,20 @@ def deleteItem(category_id, item_id):
 
 @app.route('/categories/JSON/')
 def categoryJSON():
+    """ Returns Categories info in JSON format"""
+
     categories = session.query(Category)
     return jsonify(categories=[i.serialize for i in categories])
 
 
 @app.route('/categories/<int:category_id>/items/JSON/')
 def categoryItemsJSON(category_id):
+    """ Returns items info in a particular category in JSON format"""
+
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(Item).filter_by(
         category_id=category_id).all()
     return jsonify(Items=[i.serialize for i in items])
-
-
-@app.route('/categories/<int:category_id>/items/<int:item_id>/JSON/')
-def categoryItemJSON(category_id, item_id):
-    item = session.query(Item).filter_by(
-        category_id=category_id, id=item_id).one()
-    return jsonify(Item=item.serialize)
 
 
 if __name__ == '__main__':
