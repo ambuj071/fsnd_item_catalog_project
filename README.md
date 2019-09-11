@@ -13,7 +13,8 @@ In this project we develop an application that provides a list of items within a
 * Account with Google or Facebook in order to add/modify databse items
 
 ## How to Run
-Run finalProject.py and navigate to localhost:5000 or localhost:5000/categories. A default database (category_item.db) is provided to provide an initial catalog. Users can perform CRUD operations to modify the database.
+* Run finalProject.py and navigate to localhost:5000 or localhost:5000/categories. A default database (category_item.db) is provided to provide an initial catalog. Users can perform CRUD operations to modify the database.
+* To obtain information in JSON format, visit localhost:5000/categories/JSON or localhost:5000//categories/<int:category_id>/items/JSON/ as needed
 
 ## Authors
 * Ambuj Agrawal
